@@ -1,14 +1,6 @@
-name: Build RSDKv5
+Name: Build RSDKv5
 
 on: workflow_dispatch
-
-# each artifact is like 15MB so we'll start by only doing it manually
-# on:
-#   push:
-#     branches:
-#       - master
-
-# TODO: readd with: submodules: recursive once we can
 
 jobs:
   v5-windows:
@@ -97,3 +89,18 @@ jobs:
         with:
           name: v5-linux
           path: bin/Linux
+  v5-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Build RSDKv5 + U iOS
+        run: |
+          make -j8 RSDK_ONLY=1 RSDK_REVISION=3 AUTOBUILD=1
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: v5-ios
+          path: bin/iOS
